@@ -4,10 +4,12 @@ public abstract class IPAddress {
     private String[] ipAddressBlocks;
     private Type type;
 
-    public void convertIPAddressTo(Type type) {
+    public IPAddress convertIPAddressTo(Type type) {
         IPAddress newIpAddress = Converter.convert(this, type);
-        this.setIpAddressBlocks(newIpAddress.getIpAddressBlocks());
-        this.setType(newIpAddress.getType());
+        newIpAddress.setIpAddressBlocks(newIpAddress.getIpAddressBlocks());
+        newIpAddress.setType(newIpAddress.getType());
+
+        return newIpAddress;
     }
 
     public String[] getIpAddressBlocks() {
