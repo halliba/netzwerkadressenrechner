@@ -1,3 +1,7 @@
+import logic.Converter;
+import logic.IPAddress;
+import logic.IPv4Address;
+import logic.Type;
 import org.junit.Test;
 import static org.junit.Assert.assertEquals;
 
