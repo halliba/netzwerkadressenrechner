@@ -13,6 +13,51 @@ public class IPv4Subnet {
 
 
 
+    public IPv4Subnet(int suffix, IPv4Address networkIpAddress) {
+
+    this.suffix = suffix;
+    this.networkIpAddress = networkIpAddress;
+    this.subnetmask = createSubnetmaskBy(suffix);
+
+    }
+
+
+
+    public IPv4HostAddress[] createIPv4HostAddresses(int amountHosts) {
+
+        IPv4HostAddress[] iPv4HostAddresses = new IPv4HostAddress[amountHosts];
+
+        String[] networkIPAddressblock = getNetworkIpAddress().getIpAddressBlocks();
+
+        for (int i = 0; i < amountHosts; i++){
+            int blockNumber = getBlockNumber(networkIPAddressblock, 3);
+            if(blockNumber < 3){
+                for (int j = 3; blockNumber < j; j--){
+                    networkIPAddressblock[j] = "0";
+                }
+            }else {
+                networkIPAddressblock[blockNumber] = String.valueOf(Integer.parseInt(networkIPAddressblock[blockNumber]) + 1);
+            }
+
+            IPv4Address iPv4Address = new IPv4Address(networkIPAddressblock,Type.DECIMAL);
+            iPv4HostAddresses[i] = new IPv4HostAddress(iPv4Address);
+
+        }
+
+
+        return iPv4HostAddresses;
+    }
+
+    public int getBlockNumber(String[] networkIPBlock, int number){
+        if(Integer.parseInt(networkIPBlock[number]) < 255){
+            return number;
+        }
+        int newNumber = number - 1;
+
+        return getBlockNumber(networkIPBlock, newNumber);
+    }
+
+
 
 
     public IPv4Address createSubnetmaskBy(int suffix) {
