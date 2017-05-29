@@ -12,6 +12,9 @@ public class IPv4Subnet {
     private int suffix;
 
 
+
+
+
     public IPv4Address createSubnetmaskBy(int suffix) {
         String binarySubnetMaskString = "";
         for(int i = 0; i < suffix; i++){
