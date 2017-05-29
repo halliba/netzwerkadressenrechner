@@ -12,6 +12,8 @@ public abstract class IPAddress {
         return newIpAddress;
     }
 
+
+
     public String[] getIpAddressBlocks() {
         return ipAddressBlocks;
     }
@@ -23,6 +25,7 @@ public abstract class IPAddress {
     public Type getType() {
         return type;
     }
+
 
     public void setType(Type type) {
         this.type = type;
