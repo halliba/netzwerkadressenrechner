@@ -13,12 +13,15 @@ public class IPv4Subnet {
     private int amountHosts;
     private int suffix;
 
+    public IPv4Subnet(){
 
-    public IPv4Subnet() {
+    }
 
-    //this.suffix = suffix;
-    //this.networkIpAddress = networkIpAddress;
-    //this.subnetmask = createSubnetmaskBy(suffix);
+    public IPv4Subnet(int suffix, IPv4Address networkIpAddress) {
+
+    this.suffix = suffix;
+    this.networkIpAddress = networkIpAddress;
+    this.subnetmask = createSubnetmaskBy(suffix);
 
     }
 

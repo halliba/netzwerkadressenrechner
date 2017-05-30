@@ -4,11 +4,15 @@ import static org.junit.Assert.*;
 public class Tesssst {
     @Test
     public void teeesssstt(){
-        String[] network = {"215","192","30","1"};
+        String[] test = new String[3];
 
-        for(String net : network){
+        String t = "hallo";
 
-        }
+        test[0] = t;
+        System.out.println(test[0]);
+        t = "aaaa";
+        System.out.println(test[0]);
+
 
     }
 }

@@ -37,19 +37,19 @@ public class IPv4SubnetTest {
     @Test
     public void createHostIPv4AddressByTest(){
         //given
-        IPv4Subnet iPv4SubnetOne = new IPv4Subnet();
-        IPv4Subnet iPv4SubnetTwo = new IPv4Subnet();
         String[] ipAddressBlockOne = new String[4];
         ipAddressBlockOne[0] = "192";
         ipAddressBlockOne[1] = "168";
         ipAddressBlockOne[2] = "172";
         ipAddressBlockOne[3] = "0";
+        IPv4Subnet iPv4SubnetOne = new IPv4Subnet(24,new IPv4Address(ipAddressBlockOne,Type.DECIMAL));
 
         String[] ipAddressBlockTwo = new String[4];
         ipAddressBlockTwo[0] = "192";
         ipAddressBlockTwo[1] = "168";
         ipAddressBlockTwo[2] = "172";
         ipAddressBlockTwo[3] = "252";
+        IPv4Subnet iPv4SubnetTwo = new IPv4Subnet(23,new IPv4Address(ipAddressBlockTwo, Type.DECIMAL));
 
 
         //when
