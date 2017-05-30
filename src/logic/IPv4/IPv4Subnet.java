@@ -3,6 +3,8 @@ package logic.IPv4;
 import logic.IPv4.IPv4Address;
 import logic.Type;
 
+import java.util.Arrays;
+
 public class IPv4Subnet {
     private IPv4Address networkIpAddress;
     private IPv4Address broadcastId;
@@ -12,41 +14,39 @@ public class IPv4Subnet {
     private int suffix;
 
 
+    public IPv4Subnet() {
 
-    public IPv4Subnet(int suffix, IPv4Address networkIpAddress) {
-
-    this.suffix = suffix;
-    this.networkIpAddress = networkIpAddress;
-    this.subnetmask = createSubnetmaskBy(suffix);
+    //this.suffix = suffix;
+    //this.networkIpAddress = networkIpAddress;
+    //this.subnetmask = createSubnetmaskBy(suffix);
 
     }
 
 
-
-    public IPv4HostAddress[] createIPv4HostAddresses(int amountHosts) {
+    public IPv4HostAddress[] createIPv4HostAddresses(int amountHosts, String[] ipAddressBlocks) {
 
         IPv4HostAddress[] iPv4HostAddresses = new IPv4HostAddress[amountHosts];
 
-        String[] networkIPAddressblock = getNetworkIpAddress().getIpAddressBlocks();
+        String[] networkIpBlock = ipAddressBlocks;
 
         for (int i = 0; i < amountHosts; i++){
-            int blockNumber = getBlockNumber(networkIPAddressblock, 3);
+            int blockNumber = getBlockNumber(ipAddressBlocks, 3);
             if(blockNumber < 3){
                 for (int j = 3; blockNumber < j; j--){
-                    networkIPAddressblock[j] = "0";
+                    ipAddressBlocks[j] = "0";
                 }
-            }else {
-                networkIPAddressblock[blockNumber] = String.valueOf(Integer.parseInt(networkIPAddressblock[blockNumber]) + 1);
             }
-
-            IPv4Address iPv4Address = new IPv4Address(networkIPAddressblock,Type.DECIMAL);
+            networkIpBlock[blockNumber] = String.valueOf(Integer.parseInt(networkIpBlock[blockNumber]) + 1);
+            IPv4Address iPv4Address = new IPv4Address(networkIpBlock,Type.DECIMAL);
             iPv4HostAddresses[i] = new IPv4HostAddress(iPv4Address);
+            ipAddressBlocks = networkIpBlock;
+            System.out.println(i + "|||" + iPv4HostAddresses[i].getIpv4Address().getIpAddressBlocks()[3]);
 
         }
 
-
         return iPv4HostAddresses;
     }
+
 
     public int getBlockNumber(String[] networkIPBlock, int number){
         if(Integer.parseInt(networkIPBlock[number]) < 255){

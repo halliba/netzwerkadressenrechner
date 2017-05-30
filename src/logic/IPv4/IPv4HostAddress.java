@@ -28,4 +28,8 @@ public class IPv4HostAddress {
     public void setName(String name) {
         this.name = name;
     }
+
+    public IPv4Address getIpv4Address() {
+        return ipv4Address;
+    }
 }

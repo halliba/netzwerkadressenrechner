@@ -22,4 +22,5 @@ public class IPv4HostAddressTest {
         //then
         assertEquals(100, lastIpBlock);
     }
+
 }
