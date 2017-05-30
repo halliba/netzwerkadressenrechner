@@ -27,8 +27,6 @@ public class IPv4Subnet {
 
         IPv4HostAddress[] iPv4HostAddresses = new IPv4HostAddress[amountHosts];
 
-        String[] networkIpBlock = ipAddressBlocks;
-
         for (int i = 0; i < amountHosts; i++){
             int blockNumber = getBlockNumber(ipAddressBlocks, 3);
             if(blockNumber < 3){
@@ -36,11 +34,9 @@ public class IPv4Subnet {
                     ipAddressBlocks[j] = "0";
                 }
             }
-            networkIpBlock[blockNumber] = String.valueOf(Integer.parseInt(networkIpBlock[blockNumber]) + 1);
-            IPv4Address iPv4Address = new IPv4Address(networkIpBlock,Type.DECIMAL);
+            ipAddressBlocks[blockNumber] = String.valueOf(Integer.parseInt(ipAddressBlocks[blockNumber]) + 1);
+            IPv4Address iPv4Address = new IPv4Address(ipAddressBlocks.clone(),Type.DECIMAL);
             iPv4HostAddresses[i] = new IPv4HostAddress(iPv4Address);
-            ipAddressBlocks = networkIpBlock;
-            System.out.println(i + "|||" + iPv4HostAddresses[i].getIpv4Address().getIpAddressBlocks()[3]);
 
         }
 

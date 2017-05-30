@@ -54,13 +54,16 @@ public class IPv4SubnetTest {
 
         //when
         IPv4HostAddress[] iPv4HostAddressesOne = iPv4SubnetOne.createIPv4HostAddresses(4,ipAddressBlockOne);
-        //IPv4HostAddress[] iPv4HostAddressesTwo = iPv4SubnetTwo.createIPv4HostAddresses(300,ipAddressBlockTwo);
+        IPv4HostAddress[] iPv4HostAddressesTwo = iPv4SubnetTwo.createIPv4HostAddresses(300,ipAddressBlockTwo);
 
         //then
         assertEquals(4, iPv4HostAddressesOne.length);
         assertEquals("2", iPv4HostAddressesOne[1].getIpv4Address().getIpAddressBlocks()[3]);
 
-        //assertEquals(300, iPv4HostAddressesTwo.length);
-        //assertEquals("173", iPv4HostAddressesTwo[4].getIpv4Address().getIpAddressBlocks()[2]);
+        assertEquals(300, iPv4HostAddressesTwo.length);
+        assertEquals("173", iPv4HostAddressesTwo[4].getIpv4Address().getIpAddressBlocks()[2]);
+        assertEquals("173", iPv4HostAddressesTwo[6].getIpv4Address().getIpAddressBlocks()[2]);
+        assertEquals("174", iPv4HostAddressesTwo[280].getIpv4Address().getIpAddressBlocks()[2]);
+        assertEquals("21", iPv4HostAddressesTwo[280].getIpv4Address().getIpAddressBlocks()[3]);
     }
 }
