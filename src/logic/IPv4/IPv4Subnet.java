@@ -10,8 +10,8 @@ public class IPv4Subnet {
     private IPv4Address broadcastId;
     private IPv4HostAddress[] hostIpAddresses;
     private IPv4Address subnetmask;
-    private int amountHosts;
     private int suffix;
+    private int maxAmountHosts;
 
     public IPv4Subnet(){
 
@@ -19,9 +19,9 @@ public class IPv4Subnet {
 
     public IPv4Subnet(int suffix, IPv4Address networkIpAddress) {
 
-    this.suffix = suffix;
-    this.networkIpAddress = networkIpAddress;
-    this.subnetmask = createSubnetmaskBy(suffix);
+        this.suffix = suffix;
+        this.networkIpAddress = networkIpAddress;
+        this.subnetmask = createSubnetmaskBy(suffix);
 
     }
 
@@ -47,13 +47,13 @@ public class IPv4Subnet {
     }
 
 
-    public int getBlockNumber(String[] networkIPBlock, int number){
-        if(Integer.parseInt(networkIPBlock[number]) < 255){
-            return number;
+    public int getBlockNumber(String[] networkIPBlock, int blockNumber){
+        if(Integer.parseInt(networkIPBlock[blockNumber]) < 255){
+            return blockNumber;
         }
-        int newNumber = number - 1;
+        int OneLessBlockNumber = blockNumber - 1;
 
-        return getBlockNumber(networkIPBlock, newNumber);
+        return getBlockNumber(networkIPBlock, OneLessBlockNumber);
     }
 
 
@@ -90,5 +90,34 @@ public class IPv4Subnet {
 
     public void setNetworkIpAddress(IPv4Address networkIpAddress) {
         this.networkIpAddress = networkIpAddress;
+    }
+
+    public void setMaxAmountHosts(IPv4Address subnetMask){
+        IPv4Address netmaskBinary = (IPv4Address) subnetMask.convertIPAddressTo(Type.BINARY);
+        String netmaskBinaryString = netmaskBinary.convertIpv4ToString();
+        int count = 0;
+
+        for(char string : netmaskBinaryString.toCharArray()){
+            count = (string == '0') ? count + 1 : count;
+        }
+
+        this.maxAmountHosts = (int) Math.pow(2,count) - 2;
+    }
+
+
+    public int getMaxAmountHosts() {
+        return maxAmountHosts;
+    }
+
+    public IPv4Address getSubnetmask() {
+        return subnetmask;
+    }
+
+    public IPv4HostAddress[] getHostIpAddresses() {
+        return hostIpAddresses;
+    }
+
+    public void setHostIpAddresses(IPv4HostAddress[] hostIpAddresses) {
+        this.hostIpAddresses = hostIpAddresses;
     }
 }

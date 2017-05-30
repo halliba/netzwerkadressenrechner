@@ -27,6 +27,6 @@ public class IPv4HostAddress {
 
     @Override
     public String toString(){
-        return getIpv4Address().convertIpv4ToString();
+        return getIpv4Address().convertIpv4ToString() + "|" + getName();
     }
 }
