@@ -36,6 +36,10 @@ public class Converter {
         int ipAddressLength = ipAddress.getIpAddressBlocks().length;
         String[] newIPAddress = new String[ipAddressLength];
 
+        if(ipAddress.getType().equals(type)){
+            return ipAddress;
+        }
+
         switch (type) {
             case BINARY:
                 IntStream.range(0, ipAddressLength).forEach(iteration -> {

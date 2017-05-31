@@ -7,6 +7,8 @@ import java.util.ArrayList;
 public class IPv4Network extends IPv4Net{
     private ArrayList<IPv4Subnet> ipv4Subnets = new ArrayList<>();
     private IPv4Address netIpAddress;
+    public final String TO_MUCH_HOSTS_MSG = "Das Subnetz ist zu groß";
+    public final String SUBNET_BIGGER_NETWORK_MSG = "Das Subnetz ist größer als das Netzwerk";
 
 
     public IPv4Network(){
@@ -20,23 +22,23 @@ public class IPv4Network extends IPv4Net{
     }
 
     public void fillSubnetsListWith(IPv4Subnet iPv4Subnet, int maxAmountHosts) {
-        if(ipv4Subnets.isEmpty()){
-           ipv4Subnets.add(iPv4Subnet);
-        }else {
-            int sum = 0;
-            for(IPv4Subnet iPv4SubnetValue : ipv4Subnets){
-                sum += iPv4SubnetValue.getHostIpAddresses().length + 2;
-            }
-            if(sum + iPv4Subnet.getHostIpAddresses().length + 2 <= maxAmountHosts + 2){
-                ipv4Subnets.add(iPv4Subnet);
-            }else{
-                try {
-                    throw new Exception("host anzahl zu groß");
-                } catch (Exception e) {
-                    e.printStackTrace();
+            if(iPv4Subnet.getMaxAmountHosts() < getMaxAmountHosts()){
+                if(ipv4Subnets.isEmpty()){
+                    ipv4Subnets.add(iPv4Subnet);
+                }else {
+                    int sum = 0;
+                    for(IPv4Subnet iPv4SubnetValue : ipv4Subnets){
+                        sum += iPv4SubnetValue.getHostIpAddresses().length + 2;
+                    }
+                    if(sum + iPv4Subnet.getHostIpAddresses().length + 2 <= maxAmountHosts + 2){
+                        ipv4Subnets.add(iPv4Subnet);
+                    }else{
+                        throw new IndexOutOfBoundsException(TO_MUCH_HOSTS_MSG);
+                    }
                 }
+            }else {
+                throw new IndexOutOfBoundsException(SUBNET_BIGGER_NETWORK_MSG);
             }
-        }
     }
 
     public IPv4Subnet createIPv4Subnet(IPv4Address networkAddress, int amountHosts){

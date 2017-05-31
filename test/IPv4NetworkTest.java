@@ -4,9 +4,16 @@ import logic.IPv4.IPv4Address;
 import logic.IPv4.IPv4Network;
 import logic.IPv4.IPv4Subnet;
 import logic.Type;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.ExpectedException;
 
 public class IPv4NetworkTest {
+
+    @Rule
+    public ExpectedException thrown = ExpectedException.none();
+
+
     @Test
     public void maxAmountHostsTest(){
         //given
@@ -87,7 +94,7 @@ public class IPv4NetworkTest {
         String[] netmaskIpThree = {"11111111","11111111","11000000","00000000"};
         String[] netmaskIpFour = {"11111111","11111111","11000000","00000000"};
 
-        String[] subnetmaskIpOne = {"11111111","11111111","11111111","00000000"};
+        String[] subnetmaskIpOne = {"11111111","11111111","00000000","00000000"};
         IPv4Address subnetmaskOne = new IPv4Address(subnetmaskIpOne, Type.BINARY);
 
         iPv4Network.setMaxAmountHosts(subnetmaskOne);
@@ -101,6 +108,52 @@ public class IPv4NetworkTest {
 
         //then
 
+    }
+
+    @Test()
+    public void fillSubnetsListExceptionSubnetBiggerThanNetworkTest(){
+
+        //given
+        IPv4Network iPv4Network = new IPv4Network();
+        String[] netmaskIpOne = {"192","168","1","0"};
+
+        String[] subnetmaskIpOne = {"11111111","11111111","11111111","00000000"};
+
+        IPv4Address subnetmaskOne = new IPv4Address(subnetmaskIpOne, Type.BINARY);
+
+        iPv4Network.setMaxAmountHosts(subnetmaskOne);
+
+        //when
+        IPv4Subnet iPv4SubnetTwo = iPv4Network.createIPv4Subnet(new IPv4Address(netmaskIpOne,Type.DECIMAL),300);
+
+        //then
+        thrown.expect(IndexOutOfBoundsException.class);
+        thrown.expectMessage(iPv4Network.SUBNET_BIGGER_NETWORK_MSG);
+        iPv4Network.fillSubnetsListWith(iPv4SubnetTwo,iPv4Network.getMaxAmountHosts());
+
+    }
+
+    @Test
+    public void fillSubnetsListExceptionSubnetToBigTest(){
+        //given
+        IPv4Network iPv4Network = new IPv4Network();
+        String[] netmaskIpOne = {"192","168","1","0"};
+
+        String[] subnetmaskIpOne = {"11111111","11111111","11111111","00000000"};
+        IPv4Address subnetmaskOne = new IPv4Address(subnetmaskIpOne, Type.BINARY);
+
+        iPv4Network.setMaxAmountHosts(subnetmaskOne);
+
+        //when
+        IPv4Subnet iPv4SubnetOne = iPv4Network.createIPv4Subnet(new IPv4Address(netmaskIpOne,Type.DECIMAL),60);
+        IPv4Subnet iPv4SubnetTwo = iPv4Network.createIPv4Subnet(new IPv4Address(netmaskIpOne,Type.DECIMAL),300);
+
+        iPv4Network.fillSubnetsListWith(iPv4SubnetOne,iPv4Network.getMaxAmountHosts());
+
+        //then
+        thrown.expect(IndexOutOfBoundsException.class);
+        thrown.expectMessage(iPv4Network.SUBNET_BIGGER_NETWORK_MSG);
+        iPv4Network.fillSubnetsListWith(iPv4SubnetTwo,iPv4Network.getMaxAmountHosts());
 
     }
 
