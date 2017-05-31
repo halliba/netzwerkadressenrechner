@@ -18,7 +18,15 @@ public class IPv4Subnet extends IPv4Net{
         super.setSuffix(suffix);
         this.networkIpAddress = networkIpAddress;
         super.setSubnetmask(createSubnetmaskBy(suffix));
+        super.setMaxAmountHosts(getSubnetmask());
 
+    }
+
+    public String[] createBroadcastIPAddress(IPv4HostAddress[] iPv4HostAddresses){
+        String[] broadcastIpBlock = iPv4HostAddresses[iPv4HostAddresses.length - 1].getIpv4Address().getIpAddressBlocks();
+        broadcastIpBlock[3] = String.valueOf(Integer.parseInt(broadcastIpBlock[3]) + 1);
+
+        return broadcastIpBlock;
     }
 
 

@@ -134,7 +134,7 @@ public class IPv4NetworkTest {
     }
 
     @Test
-    public void fillSubnetsListExceptionSubnetToBigTest(){
+    public void createIPv4SubnetExceptionSubnetToBigTest(){
         //given
         IPv4Network iPv4Network = new IPv4Network();
         String[] netmaskIpOne = {"192","168","1","0"};
@@ -142,18 +142,16 @@ public class IPv4NetworkTest {
         String[] subnetmaskIpOne = {"11111111","11111111","11111111","00000000"};
         IPv4Address subnetmaskOne = new IPv4Address(subnetmaskIpOne, Type.BINARY);
 
-        iPv4Network.setMaxAmountHosts(subnetmaskOne);
-
         //when
-        IPv4Subnet iPv4SubnetOne = iPv4Network.createIPv4Subnet(new IPv4Address(netmaskIpOne,Type.DECIMAL),60);
-        IPv4Subnet iPv4SubnetTwo = iPv4Network.createIPv4Subnet(new IPv4Address(netmaskIpOne,Type.DECIMAL),300);
-
-        iPv4Network.fillSubnetsListWith(iPv4SubnetOne,iPv4Network.getMaxAmountHosts());
+        iPv4Network.setMaxAmountHosts(subnetmaskOne);
 
         //then
         thrown.expect(IndexOutOfBoundsException.class);
         thrown.expectMessage(iPv4Network.SUBNET_BIGGER_NETWORK_MSG);
-        iPv4Network.fillSubnetsListWith(iPv4SubnetTwo,iPv4Network.getMaxAmountHosts());
+        iPv4Network.createIPv4Subnet(new IPv4Address(netmaskIpOne,Type.DECIMAL),300);
+
+
+
 
     }
 
