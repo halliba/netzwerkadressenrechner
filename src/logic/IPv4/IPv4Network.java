@@ -4,24 +4,40 @@ import logic.Type;
 
 import java.util.ArrayList;
 
-public class IPv4Network {
+public class IPv4Network extends IPv4Net{
     private ArrayList<IPv4Subnet> ipv4Subnets = new ArrayList<>();
     private IPv4Address netIpAddress;
-    private IPv4Address subnetMask;
-    private int suffix;
-    private int maxAmountHosts;
 
 
     public IPv4Network(){
 
     }
 
-    public IPv4Network(int suffix, int netIpAddress){
-        this.suffix = suffix;
-        this.subnetMask = createSubnetmaskBy(suffix);
-        this.setMaxAmountHosts(subnetMask);
+    public IPv4Network(int suffix, IPv4Address netIpAddress){
+        super.setSuffix(suffix);
+        super.setSubnetmask(createSubnetmaskBy(suffix));
+        super.setMaxAmountHosts(getSubnetmask());
     }
 
+    public void fillSubnetsListWith(IPv4Subnet iPv4Subnet, int maxAmountHosts) {
+        if(ipv4Subnets.isEmpty()){
+           ipv4Subnets.add(iPv4Subnet);
+        }else {
+            int sum = 0;
+            for(IPv4Subnet iPv4SubnetValue : ipv4Subnets){
+                sum += iPv4SubnetValue.getHostIpAddresses().length + 2;
+            }
+            if(sum + iPv4Subnet.getHostIpAddresses().length + 2 <= maxAmountHosts + 2){
+                ipv4Subnets.add(iPv4Subnet);
+            }else{
+                try {
+                    throw new Exception("host anzahl zu groß");
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+    }
 
     public IPv4Subnet createIPv4Subnet(IPv4Address networkAddress, int amountHosts){
         int suffix = createSuffixBy(amountHosts);
@@ -29,6 +45,9 @@ public class IPv4Network {
         iPv4Subnet.setMaxAmountHosts(iPv4Subnet.getSubnetmask());
         int maxAmountHostsOfSubnet = iPv4Subnet.getMaxAmountHosts();
         iPv4Subnet.setHostIpAddresses(iPv4Subnet.createIPv4HostAddresses(maxAmountHostsOfSubnet,networkAddress.getIpAddressBlocks()));
+        String[] broadcastIpBlock = iPv4Subnet.getHostIpAddresses()[iPv4Subnet.getHostIpAddresses().length - 1].getIpv4Address().getIpAddressBlocks();
+        broadcastIpBlock[3] = String.valueOf(Integer.parseInt(broadcastIpBlock[3]) + 1);
+        iPv4Subnet.setBroadcastAddress(new IPv4Address(broadcastIpBlock, Type.DECIMAL));
 
         return iPv4Subnet;
     }
@@ -45,46 +64,12 @@ public class IPv4Network {
         return suffix;
     }
 
-    public IPv4Address createSubnetmaskBy(int suffix) {
-        String binarySubnetMaskString = "";
-        for(int i = 0; i < suffix; i++){
-            if (i % 8 == 0 && i != 0){
-                binarySubnetMaskString += ".1";
-            }else {
-                binarySubnetMaskString += "1";
-            }
-        }
 
-
-        for(int i = suffix; i < 32 ; i++){
-            if (i % 8 == 0){
-                binarySubnetMaskString += ".0";
-            }else {
-                binarySubnetMaskString += "0";
-            }
-        }
-
-
-        String[] ipAddressBlocks = binarySubnetMaskString.split("\\.");
-
-        return (IPv4Address) new IPv4Address(ipAddressBlocks, Type.BINARY).convertIPAddressTo(Type.DECIMAL);
+    public ArrayList<IPv4Subnet> getIpv4Subnets() {
+        return ipv4Subnets;
     }
 
-
-    public void setMaxAmountHosts(IPv4Address subnetMask){
-        IPv4Address netmaskBinary = (IPv4Address) subnetMask.convertIPAddressTo(Type.BINARY);
-        String netmaskBinaryString = netmaskBinary.convertIpv4ToString();
-        int count = 0;
-
-        for(char string : netmaskBinaryString.toCharArray()){
-            count = (string == '0') ? count + 1 : count;
-        }
-
-        this.maxAmountHosts = (int) Math.pow(2,count);
-    }
-
-
-    public int getMaxAmountHosts() {
-        return maxAmountHosts;
+    public void setIpv4Subnets(ArrayList<IPv4Subnet> ipv4Subnets) {
+        this.ipv4Subnets = ipv4Subnets;
     }
 }

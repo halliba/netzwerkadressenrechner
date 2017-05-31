@@ -3,15 +3,11 @@ package logic.IPv4;
 import logic.IPv4.IPv4Address;
 import logic.Type;
 
-import java.util.Arrays;
 
-public class IPv4Subnet {
+public class IPv4Subnet extends IPv4Net{
     private IPv4Address networkIpAddress;
-    private IPv4Address broadcastId;
+    private IPv4Address broadcastAddress;
     private IPv4HostAddress[] hostIpAddresses;
-    private IPv4Address subnetmask;
-    private int suffix;
-    private int maxAmountHosts;
 
     public IPv4Subnet(){
 
@@ -19,9 +15,9 @@ public class IPv4Subnet {
 
     public IPv4Subnet(int suffix, IPv4Address networkIpAddress) {
 
-        this.suffix = suffix;
+        super.setSuffix(suffix);
         this.networkIpAddress = networkIpAddress;
-        this.subnetmask = createSubnetmaskBy(suffix);
+        super.setSubnetmask(createSubnetmaskBy(suffix));
 
     }
 
@@ -59,31 +55,6 @@ public class IPv4Subnet {
 
 
 
-    public IPv4Address createSubnetmaskBy(int suffix) {
-        String binarySubnetMaskString = "";
-        for(int i = 0; i < suffix; i++){
-            if (i % 8 == 0 && i != 0){
-                binarySubnetMaskString += ".1";
-            }else {
-                binarySubnetMaskString += "1";
-            }
-        }
-
-
-        for(int i = suffix; i < 32 ; i++){
-            if (i % 8 == 0){
-                binarySubnetMaskString += ".0";
-            }else {
-                binarySubnetMaskString += "0";
-            }
-        }
-
-
-        String[] ipAddressBlocks = binarySubnetMaskString.split("\\.");
-
-        return (IPv4Address) new IPv4Address(ipAddressBlocks, Type.BINARY).convertIPAddressTo(Type.DECIMAL);
-    }
-
     public IPv4Address getNetworkIpAddress() {
         return networkIpAddress;
     }
@@ -92,26 +63,6 @@ public class IPv4Subnet {
         this.networkIpAddress = networkIpAddress;
     }
 
-    public void setMaxAmountHosts(IPv4Address subnetMask){
-        IPv4Address netmaskBinary = (IPv4Address) subnetMask.convertIPAddressTo(Type.BINARY);
-        String netmaskBinaryString = netmaskBinary.convertIpv4ToString();
-        int count = 0;
-
-        for(char string : netmaskBinaryString.toCharArray()){
-            count = (string == '0') ? count + 1 : count;
-        }
-
-        this.maxAmountHosts = (int) Math.pow(2,count) - 2;
-    }
-
-
-    public int getMaxAmountHosts() {
-        return maxAmountHosts;
-    }
-
-    public IPv4Address getSubnetmask() {
-        return subnetmask;
-    }
 
     public IPv4HostAddress[] getHostIpAddresses() {
         return hostIpAddresses;
@@ -119,5 +70,13 @@ public class IPv4Subnet {
 
     public void setHostIpAddresses(IPv4HostAddress[] hostIpAddresses) {
         this.hostIpAddresses = hostIpAddresses;
+    }
+
+    public IPv4Address getBroadcastAddress() {
+        return broadcastAddress;
+    }
+
+    public void setBroadcastAddress(IPv4Address broadcastAddress) {
+        this.broadcastAddress = broadcastAddress;
     }
 }
