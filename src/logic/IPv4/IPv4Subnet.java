@@ -5,7 +5,7 @@ import logic.Type;
 
 
 public class IPv4Subnet extends IPv4Net{
-    private IPv4Address networkIpAddress;
+
     private IPv4Address broadcastAddress;
     private IPv4HostAddress[] hostIpAddresses;
 
@@ -16,7 +16,7 @@ public class IPv4Subnet extends IPv4Net{
     public IPv4Subnet(int suffix, IPv4Address networkIpAddress) {
 
         super.setSuffix(suffix);
-        this.networkIpAddress = networkIpAddress;
+        super.setNetworkIpAddress(networkIpAddress);
         super.setSubnetmask(createSubnetmaskBy(suffix));
         super.setMaxAmountHosts(getSubnetmask());
 
@@ -59,18 +59,6 @@ public class IPv4Subnet extends IPv4Net{
 
         return getBlockNumber(networkIPBlock, OneLessBlockNumber);
     }
-
-
-
-
-    public IPv4Address getNetworkIpAddress() {
-        return networkIpAddress;
-    }
-
-    public void setNetworkIpAddress(IPv4Address networkIpAddress) {
-        this.networkIpAddress = networkIpAddress;
-    }
-
 
     public IPv4HostAddress[] getHostIpAddresses() {
         return hostIpAddresses;

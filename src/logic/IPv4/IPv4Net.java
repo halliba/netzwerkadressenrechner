@@ -3,6 +3,7 @@ package logic.IPv4;
 import logic.Type;
 
 public class IPv4Net {
+    private IPv4Address networkIpAddress;
     private IPv4Address subnetmask;
     private int suffix;
     private int maxAmountHosts;
@@ -62,5 +63,13 @@ public class IPv4Net {
 
     public void setSubnetmask(IPv4Address subnetmask) {
         this.subnetmask = subnetmask;
+    }
+
+    public IPv4Address getNetworkIpAddress() {
+        return networkIpAddress;
+    }
+
+    public void setNetworkIpAddress(IPv4Address networkIpAddress) {
+        this.networkIpAddress = networkIpAddress;
     }
 }

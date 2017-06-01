@@ -6,7 +6,6 @@ import java.util.ArrayList;
 
 public class IPv4Network extends IPv4Net{
     private ArrayList<IPv4Subnet> ipv4Subnets = new ArrayList<>();
-    private IPv4Address netIpAddress;
     public final String TO_MUCH_HOSTS_MSG = "Das Subnetz ist zu groß";
     public final String SUBNET_BIGGER_NETWORK_MSG = "Das Subnetz ist größer als das Netzwerk";
 
@@ -15,8 +14,9 @@ public class IPv4Network extends IPv4Net{
 
     }
 
-    public IPv4Network(int suffix, IPv4Address netIpAddress){
+    public IPv4Network(int suffix, IPv4Address networkIPAddress){
         super.setSuffix(suffix);
+        super.setNetworkIpAddress(networkIPAddress);
         super.setSubnetmask(createSubnetmaskBy(suffix));
         super.setMaxAmountHosts(getSubnetmask());
     }
