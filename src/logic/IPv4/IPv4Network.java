@@ -19,33 +19,38 @@ public class IPv4Network extends IPv4Net{
         super.setSuffix(suffix);
         super.setNetworkIpAddress(networkIPAddress);
         super.setSubnetmask(createSubnetmaskBy(suffix));
-        super.setMaxAmountHosts(getSubnetmask());
+        super.setMaxAmountHosts(createMaxAmountHosts(getSubnetmask()));
     }
 
-    public void fillSubnetsListWith(IPv4Subnet iPv4Subnet, int maxAmountHosts) {
-        if(ipv4Subnets.isEmpty()){
-            ipv4Subnets.add(iPv4Subnet);
-        }else {
-            int sum = 0;
-            for(IPv4Subnet iPv4SubnetValue : ipv4Subnets){
-                sum += iPv4SubnetValue.getHostIpAddresses().length + 2;
-            }
-            if(sum + iPv4Subnet.getHostIpAddresses().length + 2 <= maxAmountHosts + 2){
+    public void fillSubnetsListWithSubnet(IPv4Address networkAddress,int amountSubnetHosts, int maxAmountHosts) {
+        if(!(createMaxAmountHosts(createSubnetmaskBy(createSuffixBy(amountSubnetHosts))) > maxAmountHosts)){
+            IPv4Subnet iPv4Subnet = createIPv4Subnet(networkAddress,amountSubnetHosts);
+            if(ipv4Subnets.isEmpty()){
                 ipv4Subnets.add(iPv4Subnet);
-            }else{
-                throw new IndexOutOfBoundsException(TO_MUCH_HOSTS_MSG);
+            }else {
+                int sum = 0;
+                for(IPv4Subnet iPv4SubnetValue : ipv4Subnets){
+                    sum += iPv4SubnetValue.getHostIpAddresses().length + 2;
+                }
+                System.out.println(sum);
+                System.out.println(maxAmountHosts);
+                if(sum + iPv4Subnet.getHostIpAddresses().length <= maxAmountHosts + 2){
+                    ipv4Subnets.add(iPv4Subnet);
+                }else{
+                    throw new IndexOutOfBoundsException(TO_MUCH_HOSTS_MSG);
+                }
             }
+        }else {
+            throw new IndexOutOfBoundsException(SUBNET_BIGGER_NETWORK_MSG);
         }
+
     }
 
     public IPv4Subnet createIPv4Subnet(IPv4Address networkAddress, int amountHosts){
         int suffix = createSuffixBy(amountHosts);
+        int maxAmountHostsOfSubnet = createMaxAmountHosts(createSubnetmaskBy(suffix));
         IPv4Subnet iPv4Subnet = new IPv4Subnet(suffix,networkAddress);
-        int maxAmountHostsOfSubnet = iPv4Subnet.getMaxAmountHosts();
-        if(maxAmountHostsOfSubnet > getMaxAmountHosts()){
-            throw new IndexOutOfBoundsException(SUBNET_BIGGER_NETWORK_MSG);
-        }
-        iPv4Subnet.setHostIpAddresses(iPv4Subnet.createIPv4HostAddresses(maxAmountHostsOfSubnet,networkAddress.getIpAddressBlocks()));
+        iPv4Subnet.setHostIpAddresses(iPv4Subnet.createIPv4HostAddresses(maxAmountHostsOfSubnet,networkAddress.getIpAddressBlocks().clone()));
         iPv4Subnet.setBroadcastAddress(new IPv4Address(iPv4Subnet.createBroadcastIPAddress(iPv4Subnet.getHostIpAddresses()), Type.DECIMAL));
 
         return iPv4Subnet;

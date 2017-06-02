@@ -1,6 +1,8 @@
 package gui;
 
 
+import logic.Converter;
+import logic.IPv4.IPv4Network;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 
@@ -9,14 +11,14 @@ import java.awt.*;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.util.ArrayList;
+import java.util.HashMap;
 
 
 public class NetworkPanel extends JPanel {
 
     private JTabbedPane tabbedPane;
     private static DefaultListModel<String> model = new DefaultListModel<>();
-
-
+    private HashMap<String, IPv4Network> ipv4Networks = new HashMap<>();
 
 
     private static ArrayList<SubnetPanel> subnetPanels = new ArrayList<>();
@@ -29,7 +31,10 @@ public class NetworkPanel extends JPanel {
         // Get Data an write to listModel
         for (int i = 0; i < data.size(); i++) {
             JSONObject networkObject = (JSONObject) data.get(i);
-            model.addElement(networkObject.get("id").toString());
+            String networkString = networkObject.get("id").toString();
+            model.addElement(networkString);
+            ipv4Networks.put(networkString, Converter.convertStringToIpv4Network(networkString));
+
         }
 
         // set the Network-Panel Layout to BorderLayout
@@ -171,6 +176,8 @@ public class NetworkPanel extends JPanel {
             }
 
             String newNetwork = stringBuilder.toString();
+            ipv4Networks.put(newNetwork, Converter.convertStringToIpv4Network(newNetwork));
+
 
             if (NetworkAddressValidator.validate(newNetwork)) {
                 if (!model.contains(newNetwork)) {
@@ -214,7 +221,7 @@ public class NetworkPanel extends JPanel {
     private void openNewSubnet(JList networkList, NetworkCalculator networkCalculator){
         String network = (String) networkList.getSelectedValue();
         if (network != null && networkCalculator.getTabIndexFromTitle(tabbedPane, network) == 0) {
-            SubnetPanel subnetPanel = new SubnetPanel(network, networkCalculator, data);
+            SubnetPanel subnetPanel = new SubnetPanel(ipv4Networks.get(network), network, networkCalculator, data);
             subnetPanels.add(subnetPanel);
             tabbedPane.add(network, subnetPanel);
             tabbedPane.setSelectedIndex(networkCalculator.getTabIndexFromTitle(tabbedPane, network));

@@ -18,7 +18,7 @@ public class IPv4Subnet extends IPv4Net{
         super.setSuffix(suffix);
         super.setNetworkIpAddress(networkIpAddress);
         super.setSubnetmask(createSubnetmaskBy(suffix));
-        super.setMaxAmountHosts(getSubnetmask());
+        super.setMaxAmountHosts(createMaxAmountHosts(getSubnetmask()));
 
     }
 

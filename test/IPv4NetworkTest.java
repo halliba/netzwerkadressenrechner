@@ -32,10 +32,9 @@ public class IPv4NetworkTest {
 
 
         //when
-
-        iPv4NetworkOne.setMaxAmountHosts(netmaskOne);
-        iPv4NetworkTwo.setMaxAmountHosts(netmaskTwo);
-        iPv4NetworkThree.setMaxAmountHosts(netmaskThree);
+        iPv4NetworkOne.setMaxAmountHosts(iPv4NetworkOne.createMaxAmountHosts(netmaskOne));
+        iPv4NetworkTwo.setMaxAmountHosts(iPv4NetworkTwo.createMaxAmountHosts(netmaskTwo));
+        iPv4NetworkThree.setMaxAmountHosts(iPv4NetworkThree.createMaxAmountHosts(netmaskThree));
 
 
         //then
@@ -77,9 +76,11 @@ public class IPv4NetworkTest {
     public void createIPv4SubnetTest(){
         //given
         IPv4Network iPv4Network = new IPv4Network();
-        iPv4Network.setMaxAmountHosts(iPv4Network.createSubnetmaskBy(iPv4Network.createSuffixBy(400)));
+        int maxAmountHostsOne = iPv4Network.createMaxAmountHosts(iPv4Network.createSubnetmaskBy(iPv4Network.createSuffixBy(400)));
+        iPv4Network.setMaxAmountHosts(maxAmountHostsOne);
         IPv4Network iPv4Network1 = new IPv4Network();
-        iPv4Network1.setMaxAmountHosts(iPv4Network1.createSubnetmaskBy(iPv4Network1.createSuffixBy(255)));
+        int maxAmountHostsTwo = iPv4Network1.createMaxAmountHosts(iPv4Network1.createSubnetmaskBy(iPv4Network1.createSuffixBy(255)));
+        iPv4Network1.setMaxAmountHosts(maxAmountHostsTwo);
         String[] netmaskIpOne = {"192","168","1","0"};
         String[] netmaskIpTwo = {"192","168","2","0"};
         String[] netmaskIpThree = {"11111111","11111111","11000000","00000000"};
@@ -94,7 +95,7 @@ public class IPv4NetworkTest {
         assertEquals(62,iPv4SubnetOne.getHostIpAddresses().length);
         assertEquals("63",iPv4SubnetOne.getBroadcastAddress().getIpAddressBlocks()[3]);
         assertEquals(510,iPv4SubnetTwo.getHostIpAddresses().length);
-        assertEquals("63",iPv4SubnetOne.getHostIpAddresses()[iPv4SubnetThree.getHostIpAddresses().length - 1].getIpv4Address().getIpAddressBlocks()[3]);
+        assertEquals("127",iPv4SubnetThree.getHostIpAddresses()[iPv4SubnetThree.getHostIpAddresses().length - 1].getIpv4Address().getIpAddressBlocks()[3]);
     }
 
     @Test
@@ -109,14 +110,14 @@ public class IPv4NetworkTest {
         String[] subnetmaskIpOne = {"11111111","11111111","00000000","00000000"};
         IPv4Address subnetmaskOne = new IPv4Address(subnetmaskIpOne, Type.BINARY);
 
-        iPv4Network.setMaxAmountHosts(subnetmaskOne);
+        iPv4Network.setMaxAmountHosts(iPv4Network.createMaxAmountHosts(subnetmaskOne));
 
         //when
         IPv4Subnet iPv4SubnetOne = iPv4Network.createIPv4Subnet(new IPv4Address(netmaskIpOne,Type.DECIMAL),60);
         IPv4Subnet iPv4SubnetTwo = iPv4Network.createIPv4Subnet(new IPv4Address(netmaskIpOne,Type.DECIMAL),300);
 
-        iPv4Network.fillSubnetsListWith(iPv4SubnetOne,iPv4Network.getMaxAmountHosts());
-        iPv4Network.fillSubnetsListWith(iPv4SubnetTwo,iPv4Network.getMaxAmountHosts());
+        //iPv4Network.fillSubnetsListWithSubnet(iPv4SubnetOne,iPv4Network.getMaxAmountHosts());
+        //iPv4Network.fillSubnetsListWithSubnet(iPv4SubnetTwo,iPv4Network.getMaxAmountHosts());
 
         //then
 
@@ -133,38 +134,14 @@ public class IPv4NetworkTest {
 
         IPv4Address subnetmaskOne = new IPv4Address(subnetmaskIpOne, Type.BINARY);
 
-        iPv4Network.setMaxAmountHosts(subnetmaskOne);
+        iPv4Network.setMaxAmountHosts(iPv4Network.createMaxAmountHosts(subnetmaskOne));
 
         //when
+        thrown.expect(IndexOutOfBoundsException.class);
+        thrown.expectMessage(iPv4Network.SUBNET_BIGGER_NETWORK_MSG);
         IPv4Subnet iPv4SubnetTwo = iPv4Network.createIPv4Subnet(new IPv4Address(netmaskIpOne,Type.DECIMAL),300);
 
-        //then
-        thrown.expect(IndexOutOfBoundsException.class);
-        thrown.expectMessage(iPv4Network.SUBNET_BIGGER_NETWORK_MSG);
-        iPv4Network.fillSubnetsListWith(iPv4SubnetTwo,iPv4Network.getMaxAmountHosts());
-
     }
 
-    @Test
-    public void createIPv4SubnetExceptionSubnetToBigTest(){
-        //given
-        IPv4Network iPv4Network = new IPv4Network();
-        String[] netmaskIpOne = {"192","168","1","0"};
-
-        String[] subnetmaskIpOne = {"11111111","11111111","11111111","00000000"};
-        IPv4Address subnetmaskOne = new IPv4Address(subnetmaskIpOne, Type.BINARY);
-
-        //when
-        iPv4Network.setMaxAmountHosts(subnetmaskOne);
-
-        //then
-        thrown.expect(IndexOutOfBoundsException.class);
-        thrown.expectMessage(iPv4Network.SUBNET_BIGGER_NETWORK_MSG);
-        iPv4Network.createIPv4Subnet(new IPv4Address(netmaskIpOne,Type.DECIMAL),300);
-
-
-
-
-    }
 
 }

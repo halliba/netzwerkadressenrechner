@@ -89,11 +89,11 @@ public class NetworkCalculator extends JFrame {
 
                                     for (int k = 0; k < hostList.getSize(); k++) {
                                         String hostString = hostList.getElementAt(k).toString();
-                                        String noteString = noteList.getElementAt(k).toString();
+                                        //String noteString = noteList.getElementAt(k).toString();
 
                                         JSONObject host = new JSONObject();
                                         host.put("host", hostString);
-                                        host.put("note", noteString);
+                                        //host.put("note", noteString);
                                         hosts.add(host);
 
 

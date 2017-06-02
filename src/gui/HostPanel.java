@@ -1,11 +1,14 @@
 package gui;
 
+import logic.IPv4.IPv4Subnet;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+import java.lang.reflect.Array;
+import java.util.Arrays;
 
 public class HostPanel extends JPanel {
 
@@ -14,32 +17,14 @@ public class HostPanel extends JPanel {
     private DefaultListModel<String> hostModel = new DefaultListModel<>();
     private DefaultListModel<String> notesModel = new DefaultListModel<>();
 
-    public HostPanel(String network, String subnet, JSONArray data) {
+    public HostPanel(IPv4Subnet iPv4Subnet, String network, String subnet, JSONArray data) {
         subnetTitle = subnet;
 
-        for (int i = 0; i < data.size(); i++) {
-            JSONObject networkObject = (JSONObject) data.get(i);
+        Arrays.stream(iPv4Subnet.getHostIpAddresses()).forEach(host -> {
+            hostModel.addElement(host.getIpv4Address().convertIpv4ToString());
+            notesModel.addElement(host.getName());
+        });
 
-            if (networkObject.get("id").toString().equals(network)) {
-                JSONArray subnets = (JSONArray) networkObject.get("subnets");
-                for (int j = 0; j < subnets.size(); j++) {
-
-
-                    JSONObject subnetObject = (JSONObject) subnets.get(j);
-                    String subnetString = subnetObject.get("subnet").toString();
-
-                    if (subnetString.equals(subnet)) {
-                        JSONArray hosts = (JSONArray) subnetObject.get("hosts");
-                        for (int k = 0; k < hosts.size(); k++) {
-                            JSONObject hostObject = (JSONObject) hosts.get(k);
-
-                            hostModel.addElement(hostObject.get("host").toString());
-                            notesModel.addElement(hostObject.get("note").toString());
-                        }
-                    }
-                }
-            }
-        }
 
         this.setLayout(new BorderLayout());
 

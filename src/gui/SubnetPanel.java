@@ -1,26 +1,35 @@
 package gui;
 
+import logic.Converter;
+import logic.IPv4.IPv4Network;
+import logic.IPv4.IPv4Subnet;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 
 import javax.swing.*;
+import javax.swing.plaf.synth.SynthOptionPaneUI;
 import java.awt.*;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+import java.lang.reflect.Array;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 public class SubnetPanel extends JPanel {
 
     private JTabbedPane tabbedPane;
+    private IPv4Network iPv4Network;
     private String networkTitle;
+    private Map<String, IPv4Subnet> iPv4SubnetMap = new HashMap<>();
     private DefaultListModel<String> model = new DefaultListModel<>();
     private static ArrayList<HostPanel> hostPanels = new ArrayList<>();
     private JSONArray data;
 
 
-    public SubnetPanel(String network, NetworkCalculator networkCalculator, JSONArray data) {
+    public SubnetPanel(IPv4Network iPv4Network,String network, NetworkCalculator networkCalculator, JSONArray data) {
         this.data = data;
-
+        this.iPv4Network = iPv4Network;
         // Get Data an write to listModel
         for (int i = 0; i < data.size(); i++) {
             JSONObject networkObject = (JSONObject) data.get(i);
@@ -29,7 +38,11 @@ public class SubnetPanel extends JPanel {
                 JSONArray subnets = (JSONArray) networkObject.get("subnets");
                 for (int j = 0; j < subnets.size(); j++) {
                     JSONObject subnetObject = (JSONObject) subnets.get(j);
-                    model.addElement(subnetObject.get("subnet").toString());
+                    String subnetString = subnetObject.get("subnet").toString();
+                    JSONArray hosts = (JSONArray) subnetObject.get("hosts");
+                    iPv4Network.fillSubnetsListWithSubnet(iPv4Network.getNextNetworkIPAddress(),hosts.size(),iPv4Network.getMaxAmountHosts());
+                    model.addElement(subnetString);
+                    iPv4SubnetMap.put(subnetString,iPv4Network.getIpv4Subnets().get(iPv4Network.getIpv4Subnets().size() - 1));
                 }
             }
         }
@@ -137,7 +150,12 @@ public class SubnetPanel extends JPanel {
         JButton createNewSubnetButton = new JButton();
         createNewSubnetButton.setText("Create");
         createNewSubnetButton.addActionListener(e -> {
-            model.addElement("Test");
+            int amountHosts = Integer.parseInt(amountOfHostsTextField.getText());
+            this.iPv4Network.fillSubnetsListWithSubnet(iPv4Network.getNextNetworkIPAddress(),amountHosts,this.iPv4Network.getMaxAmountHosts());
+            IPv4Subnet iPv4Subnet = iPv4Network.getIpv4Subnets().get(iPv4Network.getIpv4Subnets().size() - 1);
+            String subnetString = iPv4Subnet.toString();
+            model.addElement(subnetString);
+            iPv4SubnetMap.put(subnetString,iPv4Subnet);
             // TODO get User Input and Create new Subnet according to the data
         });
 
@@ -164,7 +182,7 @@ public class SubnetPanel extends JPanel {
 
         String subnet = (String) subnetList.getSelectedValue();
         if (subnet != null && networkCalculator.getTabIndexFromTitle(tabbedPane, subnet) == 0) {
-            HostPanel hostPanel = new HostPanel(networkTitle, subnet, data);
+            HostPanel hostPanel = new HostPanel(iPv4SubnetMap.get(subnet), networkTitle, subnet, data);
             hostPanels.add(hostPanel);
             tabbedPane.add(subnet, hostPanel);
             tabbedPane.setSelectedIndex(networkCalculator.getTabIndexFromTitle(tabbedPane, subnet));

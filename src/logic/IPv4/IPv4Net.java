@@ -10,18 +10,9 @@ public class IPv4Net {
     private int suffix;
     private int maxAmountHosts;
 
-    public IPv4Net(){
 
-    }
 
-    public IPv4Net(int suffix, IPv4Address networkIpAddress){
-        this.setSuffix(suffix);
-        this.setNetworkIpAddress(networkIpAddress);
-        this.setSubnetmask(createSubnetmaskBy(suffix));
-        this.setMaxAmountHosts(getSubnetmask());
-    }
-
-    public void setMaxAmountHosts(IPv4Address subnetMask){
+    public int createMaxAmountHosts(IPv4Address subnetMask){
         IPv4Address netmaskBinary = (IPv4Address) subnetMask.convertIPAddressTo(Type.BINARY);
         String netmaskBinaryString = netmaskBinary.convertIpv4ToString();
         int count = 0;
@@ -30,7 +21,11 @@ public class IPv4Net {
             count = (string == '0') ? count + 1 : count;
         }
 
-        this.maxAmountHosts = (int) Math.pow(2,count) - 2;
+        return  (int) Math.pow(2,count) - 2;
+    }
+
+    public void setMaxAmountHosts(int maxAmountHosts){
+        this.maxAmountHosts = maxAmountHosts;
     }
 
     public int getMaxAmountHosts(){
