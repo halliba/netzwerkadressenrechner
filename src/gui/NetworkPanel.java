@@ -3,6 +3,7 @@ package gui;
 
 import logic.Converter;
 import logic.IPv4.IPv4Network;
+import logic.IPv4.NetworkCheck;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 
@@ -12,20 +13,25 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.util.ArrayList;
 import java.util.HashMap;
-
+import java.util.Map;
 
 public class NetworkPanel extends JPanel {
 
     private JTabbedPane tabbedPane;
     private static DefaultListModel<String> model = new DefaultListModel<>();
-    private HashMap<String, IPv4Network> ipv4Networks = new HashMap<>();
+    private Map<String, IPv4Network> ipv4Networks = new HashMap<>();
 
 
     private static ArrayList<SubnetPanel> subnetPanels = new ArrayList<>();
     private JSONArray data;
 
 
+
     public NetworkPanel(NetworkCalculator networkCalculator, JSONArray data) {
+        NetworkCheck check = new NetworkCheck(data);
+        //DELETE START
+        String[] ipDB = new String[data.size()];
+        //DELETE END
         this.data = data;
 
         // Get Data an write to listModel
@@ -36,6 +42,14 @@ public class NetworkPanel extends JPanel {
             ipv4Networks.put(networkString, Converter.convertStringToIpv4Network(networkString));
 
         }
+
+        //DELETE START
+        for (int i = 0;i < data.size();i++){
+            System.out.println(ipDB[i]);
+        }
+
+        //System.out.println(Arrays.toString(ipDB));
+        //DELETE END
 
         // set the Network-Panel Layout to BorderLayout
         this.setLayout(new BorderLayout());

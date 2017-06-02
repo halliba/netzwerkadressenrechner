@@ -1,12 +1,16 @@
 package logic;
 
+import com.sun.deploy.util.ArrayUtil;
 import logic.IPv4.IPv4Address;
 import logic.IPv4.IPv4Net;
 import logic.IPv4.IPv4Network;
 import logic.IPv4.IPv4Subnet;
+import static java.lang.Math.toIntExact;
 
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.stream.IntStream;
+import java.util.stream.Stream;
 
 public class Converter {
 
@@ -33,7 +37,6 @@ public class Converter {
 
         return createdHexMap;
     }
-
 
     public static IPAddress convert(IPAddress ipAddress, Type type) {
         int ipAddressLength = ipAddress.getIpAddressBlocks().length;
@@ -82,7 +85,6 @@ public class Converter {
         return newIpv4Address;
     }
 
-
     public static String convertToDecimal(String value, Type type) {
         StringBuilder decimalBuilder = new StringBuilder(value);
         String reverseValue = decimalBuilder.reverse().toString();
@@ -95,7 +97,6 @@ public class Converter {
 
         return null;
     }
-
 
     public static String convertDecimalToBinary(int value, StringBuilder binaryBuilder) {
         int restValue = value / 2;
@@ -159,6 +160,7 @@ public class Converter {
         return ipAddress;
     }
 
+
     public static IPv4Subnet convertStringToIpv4Subnet(String network){
 
         String[] ipAndSuffix = network.split("/");
@@ -180,4 +182,97 @@ public class Converter {
 
         return new IPv4Network(suffix,new IPv4Address(ipAddress,Type.DECIMAL));
     }
+
+
+    public static long IPtoInt(String completeIP){
+        long iPBlock1, iPBlock2, iPBlock3, iPBlock4, iPasLong;
+
+        String ipSplit[] = completeIP.split("/");
+
+        String ip = ipSplit[0];
+
+        String[] ipParts = ip.split("\\.");
+        iPBlock1 = Long.parseLong(ipParts[0]);
+        iPBlock2 = Long.parseLong(ipParts[1]);
+        iPBlock3 = Long.parseLong(ipParts[2]);
+        iPBlock4 = Long.parseLong(ipParts[3]);
+
+        iPasLong = (iPBlock1*16777216L)+(iPBlock2*65536L)+(iPBlock3*256L)+(iPBlock4);
+
+        return iPasLong;
+    }
+
+    public static String[] getAllIPsInNetwork(String completeIP) {
+        String[] allIPs = new String[toIntExact(IPtoInt(getBroadcastFromNetwork(completeIP) + "/20")  - IPtoInt(completeIP)) + 1];
+
+        int counter = 0;
+        for (long l = IPtoInt(completeIP); l <= IPtoInt(getBroadcastFromNetwork(completeIP) + "/20"); l++) {
+            allIPs[counter] =  intToIP(l);
+            counter++;
+        }
+
+        return allIPs;
+    }
+
+    public static String getBroadcastFromNetwork(String completeIP) {
+        long IPasLong = IPtoInt(completeIP);
+        int prefix = Integer.valueOf(completeIP.split("/")[1]);
+
+        StringBuilder wildcardBuilder = new StringBuilder();
+        for (int i = 0; i < 32 - prefix; i++) {
+            wildcardBuilder.append("1");
+        }
+
+        String wildcardString = wildcardBuilder.toString();
+        long wildcardAsLong = Long.parseLong(wildcardString, 2);
+
+        long broadcastAsLong = IPasLong + wildcardAsLong;
+
+
+        return intToIP(broadcastAsLong);
+    }
+
+    public static String intToIP(long IPAsInt) {
+        return ((IPAsInt >> 24) & 0xFF) + "." + ((IPAsInt >> 16) & 0xFF) + "." + ((IPAsInt >> 8) & 0xFF) + "." + (IPAsInt  & 0xFF);
+    }
+
+    public static int calculateAmountReservedIPs(int prefix){
+        int reversePrefix = 32-prefix;
+        int reservedIPs = 1;
+
+        for (int i = 1; i <= reversePrefix; i++){
+            reservedIPs *= 2;
+        }
+        return reservedIPs;
+    }
+
+    public static boolean checkIfPossibleNewNetwork(String[] oldNetworks, String newNetwork) {
+        String[] allNewIPs = getAllIPsInNetwork(newNetwork);
+
+        for (int i = 0; i <= oldNetworks.length; i++) {
+            String[] allOldIPs = getAllIPsInNetwork(oldNetworks[i]);
+
+            for (int j = 0; j < allOldIPs.length; j++) {
+                if (allOldIPs[j].equals(allNewIPs[0]) || allOldIPs[j].equals(allNewIPs[allNewIPs.length])) {
+                    return false;
+                }
+            }
+
+            /*
+            if (Arrays.asList(allOldIPs).contains(allNewIPs[0]) || Arrays.asList(allOldIPs).contains(allNewIPs[allNewIPs.length]) ) {
+                return false;
+            }
+            */
+
+
+
+        }
+
+        return true;
+
+
+    }
+
+
 }
+
